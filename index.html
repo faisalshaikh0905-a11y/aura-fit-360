@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURA FIT | 360° Experience</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101010;
+  color: #d8b66c;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+header { padding: 25px 10px; }
+h1 { letter-spacing: 5px; margin: 0; }
+.tagline { color: white; letter-spacing: 2px; }
+.viewer {
+  max-width: 520px;
+  margin: 20px auto;
+  padding: 12px;
+}
+img {
+  width: 100%;
+  display: block;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-drag: none;
+  cursor: grab;
+}
+.hint { color: white; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>AURA FIT</h1>
+<p class="tagline">WEAR YOUR CONFIDENCE</p>
+</header>
+
+<div class="viewer">
+<img id="shirt" src="01.jpg" alt="AURA FIT shirt 360 view">
+<p class="hint">↔ DRAG OR SWIPE TO ROTATE 360°</p>
+</div>
+
+<script>
+const total = 24;
+const frames = [];
+
+for (let i = 1; i <= total; i++) {
+  const img = new Image();
+  img.src = String(i).padStart(2, "0") + ".jpg";
+  frames.push(img);
+}
+
+const shirt = document.getElementById("shirt");
+let frame = 0;
+let startX = 0;
+let dragging = false;
+let distance = 0;
+
+shirt.addEventListener("pointerdown", e => {
+  dragging = true;
+  startX = e.clientX;
+  distance = 0;
+  shirt.setPointerCapture(e.pointerId);
+});
+
+shirt.addEventListener("pointermove", e => {
+  if (!dragging) return;
+
+  distance += e.clientX - startX;
+  startX = e.clientX;
+
+  const steps = Math.trunc(distance / 8);
+  if (steps !== 0) {
+    frame = (frame - steps + total) % total;
+    distance -= steps * 8;
+    if (frames[frame].complete && frames[frame].naturalWidth) {
+      shirt.src = frames[frame].src;
+    }
+  }
+});
+
+shirt.addEventListener("pointerup", () => dragging = false);
+shirt.addEventListener("pointercancel", () => dragging = false);
+</script>
+
+</body>
+</html>
